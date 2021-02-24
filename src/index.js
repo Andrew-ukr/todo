@@ -1,17 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import ToDoList from './components/todo-list.js'
+import ToDoHeader from './components/todo-header.js'
+import ToDoInput from './components/todo-input.js'
+
+
+const App = () => {
+  const logged = false;
+  const logIn = <span>log in please</span>;
+  const logOut = <span>log out</span>;
+  
+  return (
+    <>
+      { logged ? logOut : logIn }
+      <ToDoHeader />
+      <ToDoInput />
+      <ToDoList />
+    </>
+  );
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  <App/>, 
+  document.querySelector('#root'));
