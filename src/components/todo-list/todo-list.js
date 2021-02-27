@@ -21,7 +21,7 @@ const TodoList = ({ todos, onDel, onLabelClick, onImportantClick }) => {
 
   return (
     <ul className="list-group todo-list">
-      { elements }
+      { elements.length > 0 ? elements: `No tasks`}
     </ul>
   );
 };

@@ -20,13 +20,18 @@ export default class App extends Component {
   createItemObj = (inputValue) => {
     return({label: inputValue, id: this.idCount++, important: false, done: false})
   }
-  
+
+    /**
+   * основна база данних state
+   */
   state = {
     todoData : [
       this.createItemObj('Drink Coffee'),
       this.createItemObj('Make Awesome App'),
       this.createItemObj('Have a lunch'),
     ],
+    
+    search: false,
   };
 
   delItemPost = (id) => {
@@ -45,18 +50,20 @@ export default class App extends Component {
     });
   };
 
-  onClickItem = (arr, item, id) => {
+  /**
+   * функція зміни властивостей елемента поста important , done
+   */
+  changeItemProp = (arr, item, id) => {
     let indx = arr.findIndex(item => item.id === id);
     let newArr = [...arr];
     newArr[indx][item] = !(newArr[indx][item]);
-    console.log(newArr)
-    return newArr
+    return newArr;
   }
 
   onLabelClick = (id) => {
     this.setState(({todoData})=>{
       return({
-        todoData: this.onClickItem(todoData, 'done' , id)
+        todoData: this.changeItemProp(todoData, 'done' , id)
       })
     });
   };
@@ -64,30 +71,56 @@ export default class App extends Component {
   onImportantClick = (id) => {
     this.setState(({todoData})=>{
       return({
-        todoData: this.onClickItem(todoData, 'important' , id)
+        todoData: this.changeItemProp(todoData, 'important' , id)
       })
     });
   };
 
+  onFilterPost = (value) => {
+    this.setState(({todoData}) => {
+      if (value) {
+        return({
+          search: todoData.filter(item => item.label.toLowerCase().includes(value.toLowerCase()))
+        })
+      } else {
+        return({
+          search: false
+        })
+      }
+    })
+  }
+  
   render() {
-    const {todoData} = this.state;
+    const {todoData, search} = this.state;
+
+    const doneCount  = todoData.filter(item => item.done).length;
+    const leftCount  = todoData.length - doneCount;
+
+    const visiblePosts = !search ? todoData: search ;
+
     return (
-      <div className="todo-app">
+      <div 
+        className="todo-app"
+      >
         <AppHeader 
-          toDo={1} done={3} 
+          toDo={leftCount} 
+          done={doneCount}
         />
+        
         <div className="top-panel d-flex">
-          <SearchPanel />
+          <SearchPanel
+            onFilterPost={this.onFilterPost}
+          />
           <ItemStatusFilter />
         </div>
   
         <TodoList 
-          todos={todoData}
+          todos={visiblePosts}
           onDel={this.delItemPost}
           onLabelClick={this.onLabelClick}
           onImportantClick={this.onImportantClick}
-
         />
+
         <ItemAddForm 
           addItemPost={this.addItemPost}
         />
