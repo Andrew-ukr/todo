@@ -32,7 +32,7 @@ export default class App extends Component {
     ],
     inputSearchValue: '',
     btnFilterValue: 'all',
-    search: false,
+    // search: false,
   };
 
   delItemPost = (id) => {
@@ -81,49 +81,31 @@ export default class App extends Component {
     this.setState({
       [stateItem]: value
     })
+  }
 
-    this.setState(({todoData,inputSearchValue, btnFilterValue}) => {
-      if (inputSearchValue !== '' || btnFilterValue !== 'all') {
-      let newArr = todoData.filter(item => {
-        if (inputSearchValue === '') {
+  filter = (data, search, btnFilter) => {
+    let newArr = data.filter(item => item.label.toLowerCase().includes(search.toLowerCase()))
+    newArr = newArr.filter(item => {
+      switch (btnFilter) {
+        case 'all':
+        return item
+        case 'active':
+          return !item.done
+        case 'done':
+          return item.done
+        default:
           return item
-        } else {
-          return item.label.toLowerCase().includes(inputSearchValue.toLowerCase())
-        }
-      });
-
-      newArr = newArr.filter(item => {
-        switch (btnFilterValue) {
-          case 'all':
-          return item
-          case 'active':
-            return !item.done
-          case 'done':
-            return item.done
-          default:
-            return item
-        }
-      })
-
-        return({
-          search: newArr
-        });
-        
-      } else {
-        return({
-          search: false
-        })
       }
     })
+    return newArr
   }
-  
-  
+
   render() {
-    const {todoData, search} = this.state;
+    const {todoData, inputSearchValue, btnFilterValue} = this.state;
     const doneCount  = todoData.filter(item => item.done).length;
     const leftCount  = todoData.length - doneCount;
 
-    const visiblePosts = !search ? todoData: search ;
+    const visiblePosts = this.filter(todoData, inputSearchValue, btnFilterValue);
 
     return (
       <div 
