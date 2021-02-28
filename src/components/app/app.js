@@ -30,7 +30,8 @@ export default class App extends Component {
       this.createItemObj('Make Awesome App'),
       this.createItemObj('Have a lunch'),
     ],
-    
+    inputSearchValue: '',
+    btnFilterValue: 'all',
     search: false,
   };
 
@@ -75,13 +76,39 @@ export default class App extends Component {
       })
     });
   };
+  
+  changeFilterItems = (value, stateItem) => {
+    this.setState({
+      [stateItem]: value
+    })
 
-  onFilterPost = (value) => {
-    this.setState(({todoData}) => {
-      if (value) {
+    this.setState(({todoData,inputSearchValue, btnFilterValue}) => {
+      if (inputSearchValue !== '' || btnFilterValue !== 'all') {
+      let newArr = todoData.filter(item => {
+        if (inputSearchValue === '') {
+          return item
+        } else {
+          return item.label.toLowerCase().includes(inputSearchValue.toLowerCase())
+        }
+      });
+
+      newArr = newArr.filter(item => {
+        switch (btnFilterValue) {
+          case 'all':
+          return item
+          case 'active':
+            return !item.done
+          case 'done':
+            return item.done
+          default:
+            return item
+        }
+      })
+
         return({
-          search: todoData.filter(item => item.label.toLowerCase().includes(value.toLowerCase()))
-        })
+          search: newArr
+        });
+        
       } else {
         return({
           search: false
@@ -90,9 +117,9 @@ export default class App extends Component {
     })
   }
   
+  
   render() {
     const {todoData, search} = this.state;
-
     const doneCount  = todoData.filter(item => item.done).length;
     const leftCount  = todoData.length - doneCount;
 
@@ -109,9 +136,11 @@ export default class App extends Component {
         
         <div className="top-panel d-flex">
           <SearchPanel
-            onFilterPost={this.onFilterPost}
+            changeFilterItems={this.changeFilterItems}
           />
-          <ItemStatusFilter />
+          <ItemStatusFilter 
+            changeFilterItems={this.changeFilterItems}
+          />
         </div>
   
         <TodoList 

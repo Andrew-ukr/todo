@@ -29,7 +29,7 @@ export default class ItemAddForm extends Component {
       >
 
         <input 
-          className="form-control"
+          className="form-control search-input"
           type="text" 
           name="input-to-do"placeholder="Type new task"
           onInput={this.onInputChange}
@@ -40,9 +40,7 @@ export default class ItemAddForm extends Component {
           type='submit'
           className="btn btn-outline-secondary"
         >
-
           Add task
-
         </button>
 
       </form>
